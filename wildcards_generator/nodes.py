@@ -27,7 +27,7 @@ class PromptSaveNode:
     RETURN_TYPES = ()
     FUNCTION = "save_prompt"
     OUTPUT_NODE = True
-    CATEGORY = "wildcards_generator"
+    CATEGORY = "提示词"
     
     def save_prompt(self, prompt, save_path, save_mode, file_name="prompts.txt", image_name=""):
         """保存提示词到文件
@@ -79,16 +79,19 @@ class RandomWildcardNode:
                 "wildcard_file": ("STRING", {"default": "E:/Project1/Wildcards-Generator/wildcards.txt"}),
                 "num_prompts": ("INT", {"default": 1, "min": 1, "max": 100}),
                 "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
+            },
+            "optional": {
+                "fixed_prompt": ("STRING", {"default": "", "multiline": False}),
             }
         }
     
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("random_prompt",)
     FUNCTION = "get_random_prompt"
-    CATEGORY = "wildcards_generator"
+    CATEGORY = "提示词"
     
-    def get_random_prompt(self, wildcard_file, num_prompts, seed):
-        """从wildcard文件中随机抽取提示词"""
+    def get_random_prompt(self, wildcard_file, num_prompts, seed, fixed_prompt=""):
+        """从wildcard文件中随机抽取提示词，并与固定提示词合并"""
         try:
             # 设置随机种子
             if seed > 0:
@@ -99,11 +102,26 @@ class RandomWildcardNode:
                 prompts = [line.strip() for line in f if line.strip()]
             
             if not prompts:
-                return ("",)
+                return (fixed_prompt,)
             
             # 随机抽取提示词
             random_prompts = random.choices(prompts, k=num_prompts)
-            result = "\n".join(random_prompts)
+            random_result = "\n".join(random_prompts)
+            
+            # 合并固定提示词和随机提示词
+            if fixed_prompt:
+                # 如果有多个随机提示词，每个都添加固定前缀
+                if num_prompts > 1:
+                    combined_prompts = []
+                    for prompt in random_prompts:
+                        combined_prompts.append(f"{fixed_prompt}, {prompt}")
+                    result = "\n".join(combined_prompts)
+                else:
+                    # 单个随机提示词，直接合并
+                    result = f"{fixed_prompt}, {random_result}"
+            else:
+                # 没有固定提示词，直接返回随机提示词
+                result = random_result
             
             return (result,)
         except Exception as e:
