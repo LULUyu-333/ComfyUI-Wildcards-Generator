@@ -1,0 +1,29 @@
+# 忽略测试文件
+test_plugin.py
+
+# 忽略临时文件
+*.pyc
+__pycache__/
+*.log
+*.tmp
+*.temp
+
+# 忽略IDE配置文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 忽略操作系统文件
+.DS_Store
+Thumbs.db
+
+# 忽略虚拟环境
+venv/
+.env/
+
+# 忽略需求文档（如果不需要提交的话）
+# 插件开发需求.txt
+
+# 忽略Python版本信息文件
+python_*.txt
