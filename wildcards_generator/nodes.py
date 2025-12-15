@@ -4,7 +4,11 @@ import json
 from pathlib import Path
 
 class PromptSaveNode:
-    """图片反推提示词保存节点"""
+    """保存反推提示词节点
+    
+    用于接收来自反推工作流的提示词字符串，并将其保存到文件中。
+    可以与任何产生提示词字符串的节点配合使用，包括各种反推节点。
+    """
     
     @classmethod
     def INPUT_TYPES(cls):
@@ -12,12 +16,11 @@ class PromptSaveNode:
             "required": {
                 "prompt": ("STRING", {"multiline": True, "default": ""}),
                 "save_path": ("STRING", {"default": "E:/Project1/Wildcards-Generator/prompts"}),
-                "file_name": ("STRING", {"default": "prompts.txt"}),
                 "save_mode": (["single_file", "multiple_files"], {"default": "single_file"}),
-                "image_name": ("STRING", {"default": ""}),
             },
             "optional": {
-                "image": ("IMAGE",),
+                "file_name": ("STRING", {"default": "prompts.txt"}),
+                "image_name": ("STRING", {"default": ""}),
             }
         }
     
@@ -26,8 +29,16 @@ class PromptSaveNode:
     OUTPUT_NODE = True
     CATEGORY = "wildcards_generator"
     
-    def save_prompt(self, prompt, save_path, file_name, save_mode, image_name, image=None):
-        """保存提示词到文件"""
+    def save_prompt(self, prompt, save_path, save_mode, file_name="prompts.txt", image_name=""):
+        """保存提示词到文件
+        
+        参数:
+        - prompt: 要保存的提示词字符串，通常来自反推节点的输出
+        - save_path: 保存文件的目标路径
+        - save_mode: 保存模式，single_file或multiple_files
+        - file_name: 保存的文件名（仅在single_file模式下有效）
+        - image_name: 图片名称（仅在multiple_files模式下有效，用于生成文件名）
+        """
         try:
             # 确保保存路径存在
             Path(save_path).mkdir(parents=True, exist_ok=True)
@@ -36,7 +47,7 @@ class PromptSaveNode:
                 # 为每张图片创建单独的txt文件
                 if not image_name:
                     # 如果没有提供图片名称，生成一个随机名称
-                    image_name = f"image_{random.randint(1000, 9999)}"
+                    image_name = f"prompt_{random.randint(1000, 9999)}"
                 file_path = os.path.join(save_path, f"{image_name}.txt")
             else:
                 # 汇总到同一txt文件
