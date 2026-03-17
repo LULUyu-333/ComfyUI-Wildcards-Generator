@@ -1,0 +1,11 @@
+# aistudynow_QwenVL 节点依赖
+
+# 核心依赖
+torch>=2.0.0
+transformers>=4.40.0
+accelerate>=0.26.0
+bitsandbytes>=0.43.0
+pillow>=9.0.0
+
+# Qwen VL 工具包
+qwen-vl-utils>=0.0.8

@@ -1,5 +1,5 @@
 # 忽略测试文件
-test_plugin.py
+test_*.py
 
 # 忽略临时文件
 *.pyc
@@ -22,8 +22,28 @@ Thumbs.db
 venv/
 .env/
 
-# 忽略需求文档（如果不需要提交的话）
-# 插件开发需求.txt
+# 忽略需求文档
+插件开发需求.txt
+集成式加载文件夹图片节点.txt
 
 # 忽略Python版本信息文件
 python_*.txt
+
+# 忽略Trae IDE文件
+.trae/
+
+# 忽略模型文件
+*.safetensors
+*.gguf
+
+# 忽略生成的图像文件
+*.png
+*.jpg
+*.jpeg
+*.webp
+
+# 忽略工作流文件
+*.json
+
+# 忽略提示词文件
+prompts/

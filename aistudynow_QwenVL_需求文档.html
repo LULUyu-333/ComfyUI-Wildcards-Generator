@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>aistudynow_QwenVL 节点复刻需求文档</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f5f5;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            color: #1a1a1a;
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #2563eb;
+        }
+
+        h2 {
+            color: #2563eb;
+            font-size: 24px;
+            font-weight: 600;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 4px solid #2563eb;
+        }
+
+        h3 {
+            color: #374151;
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: "Consolas", "Monaco", monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: "Consolas", "Monaco", monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        th {
+            background: #2563eb;
+            color: white;
+            font-weight: 600;
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #2563eb;
+        }
+
+        td {
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        tr:hover {
+            background: #f3f4f6;
+        }
+
+        .highlight-box {
+            background: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: #d1fae5;
+            border-left: 4px solid #10b981;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .file-tree {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: "Consolas", monospace;
+            line-height: 1.6;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .badge-blue {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-green {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-orange {
+            background: #fed7aa;
+            color: #92400e;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: #e5e7eb;
+            margin: 40px 0;
+        }
+
+        .meta-info {
+            color: #6b7280;
+            font-size: 14px;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>aistudynow_QwenVL 节点复刻需求文档</h1>
+
+        <div class="highlight-box">
+            <strong>项目目标：</strong>创建一个ComfyUI自定义节点 <code>aistudynow_QwenVL</code>，用于调用Qwen3-VL多模态大模型分析图像/视频并生成文本描述。
+        </div>
+
+        <h2>1. 技术栈</h2>
+        <ul>
+            <li>Python 3.10+</li>
+            <li>PyTorch 2.0+</li>
+            <li>Transformers 4.40+</li>
+            <li>ComfyUI 节点API</li>
+        </ul>
+
+        <h2>2. 节点规格定义</h2>
+        <pre><code># 节点类定义要求
+class aistudynow_QwenVL:
+    """Qwen3-VL 图像/视频理解节点"""
+
+    # 节点标识
+    NAME = "aistudynow_QwenVL"
+    CATEGORY = "aistudynow"
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("text",)
+    FUNCTION = "analyze"</code></pre>
+
+        <h2>3. 输入端口规格</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>端口名称</th>
+                    <th>类型</th>
+                    <th>是否必需</th>
+                    <th>形状</th>
+                    <th>说明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>image</code></td>
+                    <td><code>IMAGE</code></td>
+                    <td>条件必需</td>
+                    <td>7 (动态)</td>
+                    <td>输入图像，ComfyUI标准IMAGE张量 [B,H,W,C]</td>
+                </tr>
+                <tr>
+                    <td><code>video</code></td>
+                    <td><code>IMAGE</code></td>
+                    <td>条件必需</td>
+                    <td>7 (动态)</td>
+                    <td>输入视频帧序列，ComfyUI IMAGE格式</td>
+                </tr>
+                <tr>
+                    <td><code>custom_prompt</code></td>
+                    <td><code>STRING</code></td>
+                    <td>否</td>
+                    <td>-</td>
+                    <td>用户自定义提示词，覆盖默认系统提示</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="warning-box">
+            <strong>输入逻辑：</strong>
+            <ul>
+                <li><code>image</code> 和 <code>video</code> 至少提供一个，同时提供时优先处理 <code>image</code></li>
+                <li><code>custom_prompt</code> 为空字符串时，使用widget中的默认系统提示词</li>
+            </ul>
+        </div>
+
+        <h2>4. 输出端口规格</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>端口名称</th>
+                    <th>类型</th>
+                    <th>说明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>text</code></td>
+                    <td><code>STRING</code></td>
+                    <td>模型生成的图像/视频描述文本</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>5. Widget参数规格</h2>
+        <p>按工作流文件中的参数顺序定义：</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>索引</th>
+                    <th>参数名</th>
+                    <th>类型</th>
+                    <th>默认值</th>
+                    <th>可选值</th>
+                    <th>说明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>0</td>
+                    <td><code>model</code></td>
+                    <td>下拉选择</td>
+                    <td><code>"Qwen3-VL-2B-Instruct"</code></td>
+                    <td>Qwen3-VL-2B/4B/8B/32B-Instruct, Qwen2.5-VL-3B/7B/72B-Instruct</td>
+                    <td>模型选择</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td><code>quantization</code></td>
+                    <td>下拉选择</td>
+                    <td><code>"4-bit (VRAM-friendly)"</code></td>
+                    <td>"none", "4-bit (VRAM-friendly)", "8-bit", "FP16"</td>
+                    <td>量化模式</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><code>system_prompt</code></td>
+                    <td>多行文本</td>
+                    <td><code>"Describe this image in detail."</code></td>
+                    <td>-</td>
+                    <td>系统提示词</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><code>user_prompt</code></td>
+                    <td>文本（占位）</td>
+                    <td><code>""</code></td>
+                    <td>-</td>
+                    <td>从custom_prompt输入接收，widget显示占位</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td><code>max_tokens</code></td>
+                    <td>整数</td>
+                    <td><code>1024</code></td>
+                    <td>1-8192</td>
+                    <td>最大生成token数</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td><code>use_image_resolution</code></td>
+                    <td>布尔</td>
+                    <td><code>true</code></td>
+                    <td>true/false</td>
+                    <td>是否使用原图分辨率（影响性能）</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td><code>seed</code></td>
+                    <td>整数</td>
+                    <td>随机</td>
+                    <td>0-2^63-1</td>
+                    <td>随机种子</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td><code>seed_mode</code></td>
+                    <td>下拉选择</td>
+                    <td><code>"fixed"</code></td>
+                    <td>"fixed", "randomize", "increment"</td>
+                    <td>种子模式</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td><code>device</code></td>
+                    <td>下拉选择</td>
+                    <td><code>"auto"</code></td>
+                    <td>"auto", "cuda", "cpu", "mps"</td>
+                    <td>运行设备</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>6. 核心功能逻辑</h2>
+
+        <h3>6.1 模型加载逻辑</h3>
+        <pre><code>def load_model(self, model_name, quantization, device):
+    """
+    要求：
+    1. 使用 transformers.AutoModelForVision2Seq 加载Qwen3-VL模型
+    2. 根据quantization参数应用不同的加载配置：
+       - "none": 使用torch.float16或bfloat16（根据GPU支持）
+       - "4-bit": 使用BitsAndBytesConfig(load_in_4bit=True)
+       - "8-bit": 使用BitsAndBytesConfig(load_in_8bit=True)
+       - "FP16": 强制torch.float16
+    3. 使用AutoProcessor处理图像预处理
+    4. 实现模型缓存机制：同配置模型只加载一次，存储在全局变量中
+    5. 模型路径：自动从HuggingFace下载，或从ComfyUI/models/llm_checkpoints/加载本地模型
+    """</code></pre>
+
+        <h3>6.2 图像预处理逻辑</h3>
+        <pre><code>def preprocess_image(self, image_tensor, use_original_resolution):
+    """
+    要求：
+    1. 输入：ComfyUI IMAGE张量 [Batch, Height, Width, Channel]，值域[0,1]
+    2. 转换为PIL Image或numpy数组 [H,W,C]，值域[0,255]
+    3. 如果use_original_resolution=False，将长边缩放到1024（保持比例）
+    4. 返回：PIL Image列表（支持batch处理）
+    """</code></pre>
+
+        <h3>6.3 推理逻辑</h3>
+        <pre><code>def analyze(self, image=None, video=None, custom_prompt="", 
+            model="Qwen3-VL-2B-Instruct", quantization="4-bit (VRAM-friendly)",
+            system_prompt="Describe this image in detail.", 
+            max_tokens=1024, use_image_resolution=True, 
+            seed=0, seed_mode="fixed", device="auto"):
+    """
+    要求：
+    1. 种子处理：
+       - "fixed": 使用指定seed
+       - "randomize": 随机生成seed
+       - "increment": 在上次seed基础上+1
+
+    2. 设置随机种子（torch.manual_seed）
+
+    3. 确定设备优先级：auto > cuda > mps > cpu
+
+    4. 构建对话消息格式（Qwen3-VL专用格式）：
+       messages = [
+           {"role": "system", "content": system_prompt},
+           {"role": "user", "content": [
+               {"type": "image", "image": pil_image},
+               {"type": "text", "text": custom_prompt if custom_prompt else "Describe this image."}
+           ]}
+       ]
+
+    5. 使用processor.apply_chat_template()生成输入文本
+
+    6. 模型推理：
+       - inputs = processor(..., return_tensors="pt").to(device)
+       - outputs = model.generate(**inputs, max_new_tokens=max_tokens, 
+                                  do_sample=True, temperature=0.7)
+       - response = processor.batch_decode(outputs, skip_special_tokens=True)[0]
+
+    7. 提取assistant回复部分，去除system和user内容
+
+    8. 返回：(response_text,)
+    """</code></pre>
+
+        <h3>6.4 视频处理逻辑（扩展功能）</h3>
+        <pre><code>def preprocess_video(self, video_tensor, max_frames=8):
+    """
+    要求：
+    1. 输入：视频帧序列 [Frames, Height, Width, Channel]
+    2. 均匀采样最多max_frames帧
+    3. 每帧转换为PIL Image
+    4. 在对话消息中包含多帧图像
+    """</code></pre>
+
+        <h2>7. 节点注册代码</h2>
+        <pre><code># 文件路径：ComfyUI/custom_nodes/aistudynow-qwenvl/nodes.py
+
+import comfy.model_management as mm
+import folder_paths
+import torch
+import numpy as np
+from PIL import Image
+
+# 全局模型缓存
+MODEL_CACHE = {}
+
+class aistudynow_QwenVL:
+    def __init__(self):
+        self.device = mm.get_torch_device()
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {},
+            "optional": {
+                "image": ("IMAGE", {"shape": [7]}),
+                "video": ("IMAGE", {"shape": [7]}),
+                "custom_prompt": ("STRING", {"forceInput": True}),
+            },
+            "widget": {
+                "model": (["Qwen3-VL-2B-Instruct", "Qwen3-VL-4B-Instruct", 
+                          "Qwen3-VL-8B-Instruct", "Qwen3-VL-32B-Instruct",
+                          "Qwen2.5-VL-3B-Instruct", "Qwen2.5-VL-7B-Instruct",
+                          "Qwen2.5-VL-72B-Instruct"], 
+                         {"default": "Qwen3-VL-2B-Instruct"}),
+                "quantization": (["none", "4-bit (VRAM-friendly)", 
+                                 "8-bit", "FP16"], 
+                                {"default": "4-bit (VRAM-friendly)"}),
+                "system_prompt": ("STRING", {"multiline": True, 
+                                    "default": "Describe this image in detail."}),
+                "max_tokens": ("INT", {"default": 1024, "min": 1, "max": 8192}),
+                "use_image_resolution": ("BOOLEAN", {"default": True}),
+                "seed": ("INT", {"default": 0, "min": 0, 
+                         "max": 0xffffffffffffffff}),
+                "seed_mode": (["fixed", "randomize", "increment"], 
+                             {"default": "fixed"}),
+                "device": (["auto", "cuda", "cpu", "mps"], 
+                          {"default": "auto"}),
+            }
+        }
+
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("text",)
+    FUNCTION = "analyze"
+    CATEGORY = "aistudynow"
+
+    # 实现上述所有方法...
+
+NODE_CLASS_MAPPINGS = {
+    "aistudynow_QwenVL": aistudynow_QwenVL,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "aistudynow_QwenVL": "QwenVL (aistudynow)",
+}</code></pre>
+
+        <h2>8. 依赖文件</h2>
+        <div class="file-tree">
+            <strong>requirements.txt:</strong><br>
+            torch>=2.0.0<br>
+            transformers>=4.40.0<br>
+            accelerate>=0.26.0<br>
+            bitsandbytes>=0.43.0<br>
+            pillow>=9.0.0<br>
+            qwen-vl-utils>=0.0.8
+        </div>
+
+        <h2>9. 安装结构</h2>
+        <div class="file-tree">
+            ComfyUI/custom_nodes/aistudynow-qwenvl/<br>
+            ├── __init__.py &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 导入nodes.py<br>
+            ├── nodes.py &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 主节点代码<br>
+            ├── requirements.txt &nbsp;&nbsp;# 依赖列表<br>
+            └── README.md &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 安装说明
+        </div>
+
+        <h2>10. 特殊要求</h2>
+        <div class="success-box">
+            <ol>
+                <li><strong>显存优化：</strong>4-bit量化模式下，2B模型显存占用应&lt;3GB，4B模型&lt;5GB</li>
+                <li><strong>首次加载：</strong>模型首次下载时显示进度条，支持断点续传</li>
+                <li><strong>错误处理：</strong>模型加载失败时返回友好错误信息，不导致ComfyUI崩溃</li>
+                <li><strong>批处理：</strong>支持batch_size&gt;1的图像输入，顺序处理</li>
+                <li><strong>缓存策略：</strong>使用LRU缓存最近2个不同配置的模型，避免频繁切换模型时的重复加载</li>
+            </ol>
+        </div>
+
+        <h2>11. 与原工作流的兼容性</h2>
+        <p>确保替换后：</p>
+        <ul>
+            <li>输入端口名称完全匹配（<code>image</code>, <code>video</code>, <code>custom_prompt</code>）</li>
+            <li>输出端口名称完全匹配（<code>text</code>）</li>
+            <li>widget参数顺序和类型与原节点一致</li>
+            <li>生成的文本格式与原节点相似（详细、自然的图像描述）</li>
+        </ul>
+
+        <hr>
+
+        <div class="meta-info">
+            <strong>文档信息：</strong><br>
+            生成时间：2026-03-17 10:34<br>
+            版本：v1.0<br>
+            用途：AI编程工具需求文档（ComfyUI节点开发）
+        </div>
+    </div>
+</body>
+</html>

@@ -110,9 +110,8 @@ class StringSaveNode:
             Path(save_path).mkdir(parents=True, exist_ok=True)
             
             # 构建基础文件名（不含扩展名）
-            base_name, ext = os.path.splitext(file_name)
-            if not ext:
-                ext = ".txt"
+            base_name, _ = os.path.splitext(file_name)  # 忽略输入的扩展名
+            ext = ".txt"  # 强制使用.txt扩展名
             
             file_path = ""
             
